@@ -37,6 +37,9 @@ If `.plans/` does not exist, fall back to `plans/`.
 3. If multiple plans exist, present them via AskUserQuestion and ask which to implement.
 4. If no plans exist: "No plans found in `.plans/` or `plans/`. Run `my-plan` first." Stop.
 5. Read the selected plan fully.
+6. Read the plan's `Execution Status`, `Task Checklist`, `Decisions Log`, and
+   `Outcomes / Drift` sections if present. If they are missing, create them before
+   implementation begins so the plan remains the execution record.
 
 ---
 
@@ -74,6 +77,13 @@ Work through the plan's tasks in order. For each task:
 4. **Run tests** if the task specifies them, or if a test runner is available.
 5. **Commit** — one commit per task with a descriptive message:
    `<type>: <description>` (e.g., `feat: add token validation middleware`)
+6. **Update the plan** — after the commit succeeds:
+   - Set `Execution Status` to `In Progress` while tasks remain, then `Implemented`
+     after the final task is done
+   - Mark the matching checkbox in `Task Checklist` as complete
+   - Record the commit SHA next to that task
+   - Append any implementation-time decisions to `Decisions Log`
+   - Append plan inaccuracies or controlled divergence to `Outcomes / Drift`
 
 ### Implementation rules
 
@@ -84,6 +94,8 @@ Work through the plan's tasks in order. For each task:
 - If a task turns out to be more complex than described, break it into sub-commits
   but keep the logical grouping.
 - If a test fails after implementation, fix it before moving to the next task.
+- The plan is not write-once. Keep it up to date as reality changes so `my-review`,
+  `my-ship`, and `my-land` inherit an accurate execution record.
 
 ---
 
@@ -118,5 +130,7 @@ If any tasks were skipped or partially done, flag them clearly.
 - Do NOT create PRs — that's `my-ship`'s job.
 - If the plan references files that don't exist or paths that are wrong, investigate
   and fix rather than failing silently. Note any plan inaccuracies in the final report.
+- Before finishing, ensure the plan status reads `Implemented` if all tasks are done,
+  otherwise leave it at the most accurate intermediate status.
 - If both `.plans/` and `plans/` exist, prefer `.plans/` unless the user explicitly
   points to a file in `plans/`.

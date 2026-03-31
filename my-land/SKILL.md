@@ -28,7 +28,7 @@ Mostly automated. The user said `/my-land` which means DO IT.
 - Deploy failure or production health issues (offer revert)
 
 **Never stop for:**
-- Choosing merge method (auto-detect)
+- Choosing merge method
 - Timeout warnings (warn and continue)
 
 ---
@@ -49,9 +49,13 @@ Mostly automated. The user said `/my-land` which means DO IT.
 3. Detect PR: `gh pr view --json number,state,title,url,mergeable,baseRefName,headRefName`
 4. Validate:
    - No PR → **STOP.** "Run /my-ship first."
-   - Already merged → "Nothing to do."
+   - Already merged → capture merge metadata, skip Step 4, and continue to deploy
+     detection / final reporting so the plan record is still updated.
    - Closed → "Reopen it first."
    - Open → continue.
+5. Find the active plan in `.plans/` first, then `plans/` as a compatibility fallback.
+   Read its `Execution Status`, `Task Checklist`, `Decisions Log`, and `Outcomes / Drift`
+   so merge/deploy reporting updates the same execution record.
 
 ---
 
@@ -105,12 +109,7 @@ If A or C → continue.
 
 ## Step 4: Merge
 
-Try auto-merge first (respects repo settings and merge queues):
-```bash
-gh pr merge --auto --delete-branch
-```
-
-If `--auto` not available:
+Always squash merge:
 ```bash
 gh pr merge --squash --delete-branch
 ```
@@ -226,3 +225,17 @@ Verification: HEALTHY / DEGRADED / SKIPPED / REVERTED
 
 VERDICT: DEPLOYED AND VERIFIED / DEPLOYED (UNVERIFIED) / REVERTED
 ```
+
+## Step 9.5: Update Plan Record
+
+If a matching plan exists, update it before finishing:
+
+1. Set `Execution Status` to:
+   - `Merged` after the PR lands
+   - `Deployed` if deploy verification also completed successfully
+   - `Reverted` if Step 8 is used
+2. Append merge method (`squash`), merge SHA, PR URL, and deployment verification
+   outcome to `Outcomes / Drift`
+3. Append any land-time decisions or exceptions to `Decisions Log`
+
+The plan should end the workflow as a concise, accurate execution ledger.

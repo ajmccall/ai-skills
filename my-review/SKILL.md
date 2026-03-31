@@ -58,6 +58,9 @@ Before reviewing code quality, check: did they build what was requested?
 4. Flag:
    - **Scope creep:** Files changed unrelated to stated intent, features not mentioned
    - **Missing requirements:** Stated work not addressed in the diff
+5. If a plan file is found, treat it as a living execution record:
+   - Read `Execution Status`, `Task Checklist`, `Decisions Log`, and `Outcomes / Drift`
+   - Cross-check them against the actual diff before trusting them
 5. Output:
    ```
    Scope Check: CLEAN / DRIFT DETECTED / REQUIREMENTS MISSING
@@ -151,6 +154,21 @@ For each finding:
    architecture decisions, trade-off choices, scope questions.
 
 After all fixes: re-run `git diff origin/<base> --stat` to confirm changes.
+
+## Step 5.5: Update Plan Record
+
+If a matching plan file was found, update it before finishing:
+
+1. Set `Execution Status` to:
+   - `Reviewed` if no issues remain
+   - `Review Changes Applied` if you auto-fixed findings
+   - leave a more conservative status if review is blocked
+2. In `Task Checklist`, note any task that is still incomplete or contradicted by the diff.
+3. Append material review outcomes to `Decisions Log` when a fix changed behavior.
+4. Append findings, scope drift, and fix commit SHAs to `Outcomes / Drift`.
+
+The goal is that the plan remains the canonical record of what was intended, what
+actually shipped on the branch, and what still needs attention.
 
 ---
 

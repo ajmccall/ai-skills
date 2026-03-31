@@ -47,6 +47,9 @@ implementation) and **code** (audit implemented UI and fix issues).
 2. If Plan Mode: read the spec/plan file.
 3. If Code Mode: `git diff origin/main --stat` to scope changed UI files.
 4. `git log --oneline -10` for recent context.
+5. If reviewing a file in `.plans/` or `plans/`, or if a matching implementation plan
+   exists, read its `Execution Status`, `Task Checklist`, `Decisions Log`, and
+   `Outcomes / Drift` sections. Treat them as the living record to update.
 
 **UI scope check:** If the changes have NO UI components (pure backend, CLI, data
 pipeline), say so and exit: "No UI scope — design review not applicable."
@@ -127,6 +130,14 @@ interaction patterns.
 ## P8: Write Updated Plan
 
 After all passes, write the improved plan back to the same file (or a new section).
+Also update the plan's living execution sections:
+- Keep `Execution Status` accurate. If this is still pre-implementation, leave it as
+  `Planned`; if you are clarifying an in-flight plan, preserve the more advanced status.
+- Append design decisions, chosen hierarchy, state-model clarifications, and visual
+  rules to `Decisions Log`.
+- Append the design-review scorecard and any meaningful scope clarifications to
+  `Outcomes / Drift`.
+
 Present final ratings:
 
 ```
@@ -153,6 +164,8 @@ Audit implemented UI code. Find and fix visual issues.
 1. Map changed files to UI pages/components.
 2. Read the plan from `.plans/` if one exists, otherwise `plans/` — cross-reference intent vs implementation.
 3. If a local dev server is running, note the URL. Otherwise work from source code.
+4. If a matching plan exists, read its `Execution Status`, `Task Checklist`,
+   `Decisions Log`, and `Outcomes / Drift` before auditing.
 
 ## C2: Design System Extraction
 
@@ -205,6 +218,14 @@ For each finding:
 1. **AUTO-FIX** (mechanical — spacing, contrast, missing states): fix it, commit as
    `fix(design): <description>`.
 2. **ASK** (taste/judgment): AskUserQuestion with options.
+
+After fixes, if a matching plan exists, update it:
+- Set `Execution Status` to `Design Reviewed` if no implementation fixes were needed,
+  or `Design Review Changes Applied` if you changed code
+- Append material visual findings and fix commit SHAs to `Outcomes / Drift`
+- Append design-system decisions or corrected visual rules to `Decisions Log`
+- Note any mismatch between plan intent and implemented UI in `Task Checklist` or
+  `Outcomes / Drift` so downstream review/ship skills see it
 
 ## C5: Output
 

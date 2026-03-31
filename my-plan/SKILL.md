@@ -155,6 +155,21 @@ If any are not addressed, flag as `[UNADDRESSED: <gap>]`.
 
 ## NOT in Scope
 Items deferred, one line each.
+
+## Execution Status
+Status: Planned
+
+## Task Checklist
+- [ ] Task 1: <name>
+  - Commit:
+- [ ] Task 2: <name>
+  - Commit:
+
+## Decisions Log
+- YYYY-MM-DD: Plan created from spec and review.
+
+## Outcomes / Drift
+- None yet.
 ```
 
 **Rules for the plan document:**
@@ -164,7 +179,13 @@ Items deferred, one line each.
 - No vague steps. "Refactor the auth layer" is not a task. "Add `validateToken()`
   to `src/auth/middleware.ts` that checks JWT expiry and returns 401" is a task.
 - If a task requires a judgment call you can't make, flag as `[DECISION NEEDED: ...]`.
-- Do not include review commentary — only forward-looking implementation instructions.
+- The `Execution Status`, `Task Checklist`, `Decisions Log`, and `Outcomes / Drift`
+  sections are living workflow sections. Create them now so downstream skills can
+  update them without rewriting the plan.
+- In `Task Checklist`, include one checkbox per numbered task using the same task
+  names as the main `Tasks` section so downstream skills can mark progress cleanly.
+- Do not include review commentary outside `Critical Gaps` and the living workflow
+  sections — the main body should remain forward-looking implementation instructions.
 
 Present the plan to the user via AskUserQuestion:
 - A) Approve — ready to implement

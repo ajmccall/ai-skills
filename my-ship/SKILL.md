@@ -58,6 +58,9 @@ Use "the base branch" in all subsequent commands.
 2. `git status` (never `-uall`). Uncommitted changes are always included.
 3. `git diff <base>...HEAD --stat` and `git log <base>..HEAD --oneline` to understand
    what's being shipped.
+4. Find the active plan in `.plans/` first, then `plans/` as a compatibility fallback.
+   Read its `Execution Status`, `Task Checklist`, `Decisions Log`, and `Outcomes / Drift`
+   so the PR and shipping report reflect the real plan state.
 
 ---
 
@@ -208,7 +211,18 @@ EOF
 ```
 
 - PR title: short (<70 chars), describes the change
+- The PR body should explicitly note that the PR is intended to land via **squash merge**
+- If a plan exists, include its path in the PR body and summarize the final checklist state
 - If a PR already exists for this branch, skip creation and just push
+
+## Step 8.5: Update Plan Record
+
+If a matching plan exists, update it before finishing:
+
+1. Set `Execution Status` to `Shipped`
+2. Update `Task Checklist` to reflect the final implemented state
+3. Append PR URL, test summary, and coverage summary to `Outcomes / Drift`
+4. Append any release-time decisions (version bump, deferred gaps) to `Decisions Log`
 
 ---
 
