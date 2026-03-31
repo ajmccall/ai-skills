@@ -1,9 +1,10 @@
 ---
 name: my-eng-review
 description: |
-  Engineering plan review. Scope challenge, architecture, code quality, tests,
+  Engineering review of a spec. Scope challenge, architecture, code quality, tests,
   performance. Interactive — one issue per question with opinionated recommendations.
-  Use when: "review the plan", "eng review", "architecture review", "lock in the plan".
+  Input: spec from specs/. Output: review document in reviews/. Does NOT produce plans.
+  Use when: "review the spec", "eng review", "architecture review", "review this".
 allowed-tools:
   - Read
   - Write
@@ -14,11 +15,15 @@ allowed-tools:
   - WebSearch
 ---
 
-# Engineering Plan Review
+# Engineering Spec Review
 
-Review this plan thoroughly before making any code changes. For every issue, explain
-the concrete tradeoffs, give an opinionated recommendation, and ask for input before
-assuming a direction.
+Review a spec document from `specs/` thoroughly before any planning or implementation.
+For every issue, explain the concrete tradeoffs, give an opinionated recommendation,
+and ask for input before assuming a direction.
+
+**This skill reviews — it does NOT produce implementation plans.** The output is a
+review document in `reviews/`. Use `my-plan` to generate an implementation plan from
+the spec and review.
 
 ## Conventions
 
@@ -35,7 +40,15 @@ assuming a direction.
 - Bias toward explicit over clever. Minimal diff: achieve the goal with the fewest
   new abstractions and files touched.
 
-## Step 0: Scope Challenge
+## Step 0a: Find Spec
+
+1. Look in `specs/` at the repo root for the most recent spec file, or a spec matching
+   the user's request.
+2. If no spec found, AskUserQuestion: "I don't see a spec in `specs/`. Would you like to
+   point me to one, or should we run `my-ideate` first?"
+3. Read the spec fully before proceeding.
+
+## Step 0b: Scope Challenge
 
 Before reviewing anything, answer these questions:
 
@@ -187,57 +200,61 @@ If any failure mode has no test AND no error handling AND would be silent: **cri
 - Failure modes: N critical gaps
 ```
 
-## Final Step: Write Plan Document
+## Final Step: Write Review Document
 
-After the completion summary, write a plan document into the repository under review.
+After the completion summary, write a review document.
 
-**File path:** `plans/YYYY-MM-DD-<topic>.md` at the root of the repository being reviewed.
-- Use today's date. Derive `<topic>` from the work (e.g. `backend-hygiene`, `auth-refactor`).
-- Create the `plans/` directory if it doesn't exist.
+**File path:** `reviews/YYYY-MM-DD-<topic>.md` at the root of the repository.
+- Use today's date. Derive `<topic>` from the spec being reviewed.
+- Create the `reviews/` directory if it doesn't exist.
 
-**The plan document is the primary deliverable** — structured so an engineer or agent can
-implement it without reading the conversation. It must contain:
+**The review document is the primary deliverable** — structured so `my-plan` can
+produce an implementation plan without reading the conversation.
 
-### Plan document structure
+### Review document structure
 
-```
-# <Title> — YYYY-MM-DD
+```markdown
+# Review: <Title> — YYYY-MM-DD
 
-## Summary
-One paragraph: what this plan does and why (motivations, not just mechanics).
+## Spec Reviewed
+Link to the spec file: `specs/YYYY-MM-DD-<topic>.md`
 
-## Scope
-- IN: bullet list of what is being built
-- OUT: bullet list of what is explicitly deferred and why
+## Scope Verdict
+- Accepted / Reduced (and what was cut)
+- Complexity assessment (files, new abstractions)
 
-## Implementation Steps
-Ordered list. For each step:
-- **File:** exact path (and line number if modifying existing code)
-- **Change:** what to do, concisely
-- **Why:** one sentence rationale
+## Architecture
+- Approved patterns and component boundaries
+- Concerns raised and resolutions
+- Failure scenarios identified
+
+## Code Quality
+- DRY concerns
+- Error handling gaps
+- Existing code to reuse (with file paths)
 
 ## Test Requirements
-For each gap identified in the Test Review, one row:
-| File | What to assert | Type (unit/integration/E2E) |
+| Codepath | What to assert | Type (unit/integration/E2E) | Priority |
 
-## What Already Exists
-Existing code that is reused (not rebuilt) by this plan.
+## Performance
+- Concerns and mitigations
 
 ## Critical Gaps
 Any failure mode with no test AND no error handling AND silent failure.
-Flag clearly — these must be resolved before ship.
+These MUST be addressed in the plan.
 
 ## NOT in Scope
 Items considered and explicitly deferred, one line each.
+
+## Unresolved Questions
+Decisions left open that the plan must resolve before implementation.
 ```
 
-**Rules for the plan document:**
-- Write it as if handing off to someone who has not read the conversation.
+**Rules for the review document:**
+- Write as if handing off to someone who has not read the conversation.
 - Every file path must be exact and verified (grep if unsure).
-- Every line number reference must be current (re-read the file if needed).
-- If an implementation step requires a decision that was left unresolved in the review,
-  flag it as `[UNRESOLVED: <question>]` inline.
-- Do not include review conversation — only forward-looking implementation instructions.
+- Separate facts from opinions — label recommendations clearly.
+- Flag unresolved items as `[UNRESOLVED: <question>]`.
 
 ---
 

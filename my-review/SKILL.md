@@ -51,9 +51,9 @@ Before reviewing code quality, check: did they build what was requested?
 
 1. Read `TODOS.md` (if exists), PR description (`gh pr view --json body -q .body`),
    commit messages (`git log origin/<base>..HEAD --oneline`).
-2. Check for a plan file: search `~/.claude/plans/*.md` for files matching the
-   branch name or repo name. If found, extract actionable items and cross-reference
-   against the diff.
+2. Check for a plan file: search `.plans/*.md` at the repo root first, then
+   `plans/*.md` as a compatibility fallback, for files matching the branch name or
+   topic. If found, extract actionable tasks and cross-reference against the diff.
 3. Identify **stated intent** vs **actual diff**.
 4. Flag:
    - **Scope creep:** Files changed unrelated to stated intent, features not mentioned
