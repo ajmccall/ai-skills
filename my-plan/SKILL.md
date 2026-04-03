@@ -116,6 +116,13 @@ For each task, specify what tests are needed:
 ```markdown
 # <Title> — Implementation Plan — YYYY-MM-DD
 
+## Coordination
+- Root repo owner: <agent or name>
+- Backend branch: `<branch>` or `N/A`
+- Mobile branch: `<branch>` or `N/A`
+- Worktree roots: `<path>` or `N/A`
+- Related repos: backend, mobile, or `N/A`
+
 ## Source
 - Spec: `specs/YYYY-MM-DD-<topic>.md`
 - Review: `reviews/YYYY-MM-DD-<topic>.md` (or "none")
@@ -182,6 +189,8 @@ Status: Planned
 - The `Execution Status`, `Task Checklist`, `Decisions Log`, and `Outcomes / Drift`
   sections are living workflow sections. Create them now so downstream skills can
   update them without rewriting the plan.
+- Include a `## Coordination` block near the top so cross-repo work can declare
+  branch names, worktree roots, and ownership in the same file.
 - In `Task Checklist`, include one checkbox per numbered task using the same task
   names as the main `Tasks` section so downstream skills can mark progress cleanly.
 - Do not include review commentary outside `Critical Gaps` and the living workflow

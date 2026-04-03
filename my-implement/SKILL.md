@@ -40,6 +40,9 @@ If `.plans/` does not exist, fall back to `plans/`.
 6. Read the plan's `Execution Status`, `Task Checklist`, `Decisions Log`, and
    `Outcomes / Drift` sections if present. If they are missing, create them before
    implementation begins so the plan remains the execution record.
+7. Read the plan's `## Coordination` block if present. If it is missing, create it
+   before implementation begins and fill in the active repo, branch, worktree root,
+   and owner information that you are using.
 
 ---
 
@@ -96,6 +99,8 @@ Work through the plan's tasks in order. For each task:
 - If a test fails after implementation, fix it before moving to the next task.
 - The plan is not write-once. Keep it up to date as reality changes so `my-review`,
   `my-ship`, and `my-land` inherit an accurate execution record.
+- Keep the `## Coordination` block current whenever branch names, owners, or
+  worktree roots change.
 
 ---
 
@@ -132,5 +137,7 @@ If any tasks were skipped or partially done, flag them clearly.
   and fix rather than failing silently. Note any plan inaccuracies in the final report.
 - Before finishing, ensure the plan status reads `Implemented` if all tasks are done,
   otherwise leave it at the most accurate intermediate status.
+- Before finishing, ensure the `## Coordination` block matches the actual repo
+  and branch state for the work you completed.
 - If both `.plans/` and `plans/` exist, prefer `.plans/` unless the user explicitly
   points to a file in `plans/`.

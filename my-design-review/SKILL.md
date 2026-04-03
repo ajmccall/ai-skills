@@ -43,13 +43,15 @@ implementation) and **code** (audit implemented UI and fix issues).
 
 ## Step 1: Gather Context
 
-1. Read `CLAUDE.md`, `DESIGN.md` (if exists — calibrate all judgments against it).
+1. Read `AGENTS.md`, `DESIGN.md` (if exists — calibrate all judgments against it).
 2. If Plan Mode: read the spec/plan file.
 3. If Code Mode: `git diff origin/main --stat` to scope changed UI files.
 4. `git log --oneline -10` for recent context.
 5. If reviewing a file in `.plans/` or `plans/`, or if a matching implementation plan
    exists, read its `Execution Status`, `Task Checklist`, `Decisions Log`, and
    `Outcomes / Drift` sections. Treat them as the living record to update.
+6. If a matching plan exists, read its `## Coordination` block so you know which
+   repo and branch the review is supposed to apply to.
 
 **UI scope check:** If the changes have NO UI components (pure backend, CLI, data
 pipeline), say so and exit: "No UI scope — design review not applicable."
@@ -133,6 +135,8 @@ After all passes, write the improved plan back to the same file (or a new sectio
 Also update the plan's living execution sections:
 - Keep `Execution Status` accurate. If this is still pre-implementation, leave it as
   `Planned`; if you are clarifying an in-flight plan, preserve the more advanced status.
+- Update the `## Coordination` block if the visual review reveals a repo/branch split
+  mismatch or a new owner/worktree assignment.
 - Append design decisions, chosen hierarchy, state-model clarifications, and visual
   rules to `Decisions Log`.
 - Append the design-review scorecard and any meaningful scope clarifications to
@@ -162,7 +166,7 @@ Audit implemented UI code. Find and fix visual issues.
 ## C1: Scope
 
 1. Map changed files to UI pages/components.
-2. Read the plan from `.plans/` if one exists, otherwise `plans/` — cross-reference intent vs implementation.
+2. Read the plan from `.plans/` if one exists, or `.specs/` if one exists.
 3. If a local dev server is running, note the URL. Otherwise work from source code.
 4. If a matching plan exists, read its `Execution Status`, `Task Checklist`,
    `Decisions Log`, and `Outcomes / Drift` before auditing.

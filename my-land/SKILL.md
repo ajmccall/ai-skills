@@ -56,6 +56,8 @@ Mostly automated. The user said `/my-land` which means DO IT.
 5. Find the active plan in `.plans/` first, then `plans/` as a compatibility fallback.
    Read its `Execution Status`, `Task Checklist`, `Decisions Log`, and `Outcomes / Drift`
    so merge/deploy reporting updates the same execution record.
+6. Read the plan's `## Coordination` block if present so branch ownership and repo
+   split stay accurate after merge.
 
 ---
 
@@ -234,8 +236,10 @@ If a matching plan exists, update it before finishing:
    - `Merged` after the PR lands
    - `Deployed` if deploy verification also completed successfully
    - `Reverted` if Step 8 is used
-2. Append merge method (`squash`), merge SHA, PR URL, and deployment verification
+2. Update the `## Coordination` block with the final merged branch and PR state
+   if the plan still tracks active branches
+3. Append merge method (`squash`), merge SHA, PR URL, and deployment verification
    outcome to `Outcomes / Drift`
-3. Append any land-time decisions or exceptions to `Decisions Log`
+4. Append any land-time decisions or exceptions to `Decisions Log`
 
 The plan should end the workflow as a concise, accurate execution ledger.

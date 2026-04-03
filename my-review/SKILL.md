@@ -54,14 +54,16 @@ Before reviewing code quality, check: did they build what was requested?
 2. Check for a plan file: search `.plans/*.md` at the repo root first, then
    `plans/*.md` as a compatibility fallback, for files matching the branch name or
    topic. If found, extract actionable tasks and cross-reference against the diff.
-3. Identify **stated intent** vs **actual diff**.
-4. Flag:
+3. If a matching plan is found, read its `## Coordination` block and verify the
+   branch/worktree ownership matches the repo you are reviewing.
+4. Identify **stated intent** vs **actual diff**.
+5. Flag:
    - **Scope creep:** Files changed unrelated to stated intent, features not mentioned
    - **Missing requirements:** Stated work not addressed in the diff
-5. If a plan file is found, treat it as a living execution record:
+6. If a plan file is found, treat it as a living execution record:
    - Read `Execution Status`, `Task Checklist`, `Decisions Log`, and `Outcomes / Drift`
-   - Cross-check them against the actual diff before trusting them
-5. Output:
+     - Cross-check them against the actual diff before trusting them
+7. Output:
    ```
    Scope Check: CLEAN / DRIFT DETECTED / REQUIREMENTS MISSING
    Intent: <1-line summary>
@@ -163,9 +165,11 @@ If a matching plan file was found, update it before finishing:
    - `Reviewed` if no issues remain
    - `Review Changes Applied` if you auto-fixed findings
    - leave a more conservative status if review is blocked
-2. In `Task Checklist`, note any task that is still incomplete or contradicted by the diff.
-3. Append material review outcomes to `Decisions Log` when a fix changed behavior.
-4. Append findings, scope drift, and fix commit SHAs to `Outcomes / Drift`.
+2. Update the `## Coordination` block if branch ownership, worktree roots, or repo
+   split changed during the review.
+3. In `Task Checklist`, note any task that is still incomplete or contradicted by the diff.
+4. Append material review outcomes to `Decisions Log` when a fix changed behavior.
+5. Append findings, scope drift, and fix commit SHAs to `Outcomes / Drift`.
 
 The goal is that the plan remains the canonical record of what was intended, what
 actually shipped on the branch, and what still needs attention.

@@ -61,6 +61,8 @@ Use "the base branch" in all subsequent commands.
 4. Find the active plan in `.plans/` first, then `plans/` as a compatibility fallback.
    Read its `Execution Status`, `Task Checklist`, `Decisions Log`, and `Outcomes / Drift`
    so the PR and shipping report reflect the real plan state.
+5. Read the plan's `## Coordination` block if present so the PR can carry the right
+   branch and repo ownership information.
 
 ---
 
@@ -213,6 +215,8 @@ EOF
 - PR title: short (<70 chars), describes the change
 - The PR body should explicitly note that the PR is intended to land via **squash merge**
 - If a plan exists, include its path in the PR body and summarize the final checklist state
+- If a plan exists, include any relevant coordination details in the PR body when
+  the work spans more than one repo.
 - If a PR already exists for this branch, skip creation and just push
 
 ## Step 8.5: Update Plan Record
@@ -220,9 +224,10 @@ EOF
 If a matching plan exists, update it before finishing:
 
 1. Set `Execution Status` to `Shipped`
-2. Update `Task Checklist` to reflect the final implemented state
-3. Append PR URL, test summary, and coverage summary to `Outcomes / Drift`
-4. Append any release-time decisions (version bump, deferred gaps) to `Decisions Log`
+2. Update the `## Coordination` block with the final branch/PR state if relevant
+3. Update `Task Checklist` to reflect the final implemented state
+4. Append PR URL, test summary, and coverage summary to `Outcomes / Drift`
+5. Append any release-time decisions (version bump, deferred gaps) to `Decisions Log`
 
 ---
 
