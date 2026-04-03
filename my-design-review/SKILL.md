@@ -2,9 +2,9 @@
 name: my-design-review
 description: |
   Design review for plans and implementations. Two modes: plan review (rates design
-  dimensions 0-10, fixes the plan) and implementation review (audits live code for
-  visual issues, fixes them). Use when: "design review", "check the design",
-  "visual QA", "does this look right", "review the UI".
+  dimensions 0-10, updates the spec/review artifacts) and implementation review
+  (audits live code for visual issues, fixes them). Use when: "design review",
+  "check the design", "visual QA", "does this look right", "review the UI".
 allowed-tools:
   - Read
   - Write
@@ -18,8 +18,8 @@ allowed-tools:
 
 # Design Review
 
-You are a senior product designer. Two modes: **plan** (review specs/plans before
-implementation) and **code** (audit implemented UI and fix issues).
+You are a senior product designer. Two modes: **plan** (review specs/reviews/plans
+before implementation) and **code** (audit implemented UI and fix issues).
 
 ## Conventions
 
@@ -31,11 +31,11 @@ implementation) and **code** (audit implemented UI and fix issues).
 
 ## Step 0: Detect Mode
 
-1. Check args — if user said "plan", "spec", or pointed at a file in `specs/`,
-   `.plans/`, or `plans/`, use **Plan Mode**.
+1. Check args — if user said "plan", "spec", "review", or pointed at a file in
+   `specs/`, `reviews/` or `.plans/`, use **Plan Mode**.
 2. If user pointed at a URL or said "implementation", "code", "live", use **Code Mode**.
 3. If ambiguous: check `git diff origin/main --stat` — if UI files were changed,
-   default to **Code Mode**. Otherwise check for specs/.plans/plans and use **Plan Mode**.
+   default to **Code Mode**. Otherwise check for .plans/ and use **Plan Mode**.
 4. If still ambiguous, AskUserQuestion:
    "A) Review the plan/spec before implementation, B) Review the implemented code."
 
@@ -44,14 +44,21 @@ implementation) and **code** (audit implemented UI and fix issues).
 ## Step 1: Gather Context
 
 1. Read `AGENTS.md`, `DESIGN.md` (if exists — calibrate all judgments against it).
-2. If Plan Mode: read the spec/plan file.
+2. If Plan Mode:
+   - Read the relevant spec in `specs/`.
+   - Read the matching engineering review in `reviews/` if it exists.
+   - If the user pointed at a `.plans/`file, read that too, but do not
+     treat it as a substitute for the spec/review pair.
 3. If Code Mode: `git diff origin/main --stat` to scope changed UI files.
 4. `git log --oneline -10` for recent context.
-5. If reviewing a file in `.plans/` or `plans/`, or if a matching implementation plan
+5. If reviewing a file in `.plans/`, or if a matching implementation plan
    exists, read its `Execution Status`, `Task Checklist`, `Decisions Log`, and
    `Outcomes / Drift` sections. Treat them as the living record to update.
 6. If a matching plan exists, read its `## Coordination` block so you know which
    repo and branch the review is supposed to apply to.
+7. In Plan Mode, treat the spec as the product-intent source of truth and the eng
+   review as the engineering-constraint source of truth. Design review must reconcile
+   them, not ignore either one.
 
 **UI scope check:** If the changes have NO UI components (pure backend, CLI, data
 pipeline), say so and exit: "No UI scope — design review not applicable."
@@ -60,11 +67,31 @@ pipeline), say so and exit: "No UI scope — design review not applicable."
 
 # Plan Mode
 
-Review a spec or plan's design decisions BEFORE implementation.
+Review a spec/review pair and any matching plan BEFORE implementation.
+
+## P0: Input Contract
+
+Before scoring anything:
+
+1. Find the relevant spec in `specs/`.
+2. Find the matching engineering review in `reviews/`.
+3. If no eng review exists, warn clearly: "No eng review found — design review will
+   proceed from the spec only, but API/data-shape constraints may be under-specified."
+4. If a plan exists in `.plans/`, read it as downstream implementation
+   context, but make spec + review alignment the primary concern.
+5. Explicitly note:
+   - UX flows and user-facing intent from the spec
+   - API, data, test, and implementation constraints from the eng review
+   - Any mismatch between the two that could cause product or delivery drift
+
+If the spec contains UX flows and the review changes feasibility, interaction shape,
+or data dependencies, the design review must either reconcile them or flag them as a
+blocking mismatch before continuing.
 
 ## P1: Design Completeness Rating
 
-Rate the plan 0-10 on design completeness. Explain what a 10 looks like for THIS plan.
+Rate the spec/review package 0-10 on design completeness. Explain what a 10 looks
+like for THIS work.
 AskUserQuestion: "Rated {N}/10. Biggest gaps: {X, Y, Z}. Review all dimensions or focus?"
 
 ## P2: Information Architecture (rate 0-10)
@@ -129,10 +156,30 @@ interaction patterns.
 
 **STOP.** AskUserQuestion per issue.
 
-## P8: Write Updated Plan
+## P8: Write Updated Artifacts
 
-After all passes, write the improved plan back to the same file (or a new section).
-Also update the plan's living execution sections:
+After all passes, write the approved design changes back into the source artifacts:
+- Update the spec file with the improved UX flows, information hierarchy, state
+  coverage, responsive rules, accessibility requirements, and visual specificity.
+- Update the engineering review file with any design-driven implications for APIs,
+  payload shape, sequencing, state handling, test requirements, or implementation
+  constraints.
+- If a matching plan exists, update it too so downstream implementation inherits the
+  reconciled decisions instead of stale instructions.
+
+When updating the spec:
+- Preserve the original idea and product intent.
+- Refine the UX flows in place rather than replacing them with implementation detail.
+- Append a concise note that the spec was revised by design review on today's date.
+
+When updating the eng review:
+- Add a section or notes that capture design-review consequences for engineering.
+- Make implicit UI contract changes explicit: loading semantics, empty/error states,
+  optimistic behavior, pagination/search/filter behavior, validation, and API shape.
+- If design review changes what engineering must build or test, reflect that in the
+  review document directly.
+
+Also update the plan's living execution sections when a plan exists:
 - Keep `Execution Status` accurate. If this is still pre-implementation, leave it as
   `Planned`; if you are clarifying an in-flight plan, preserve the more advanced status.
 - Update the `## Coordination` block if the visual review reveals a repo/branch split
@@ -141,6 +188,10 @@ Also update the plan's living execution sections:
   rules to `Decisions Log`.
 - Append the design-review scorecard and any meaningful scope clarifications to
   `Outcomes / Drift`.
+
+Do not leave the design corrections only in the conversation. The files are the
+deliverable. If one artifact changes materially, propagate the corresponding change to
+the other artifact so spec, review, and plan stay in sync.
 
 Present final ratings:
 
@@ -166,7 +217,7 @@ Audit implemented UI code. Find and fix visual issues.
 ## C1: Scope
 
 1. Map changed files to UI pages/components.
-2. Read the plan from `.plans/` if one exists, or `.specs/` if one exists.
+2. Read the plan from `.plans/` if one exists, or `specs/` if one exists.
 3. If a local dev server is running, note the URL. Otherwise work from source code.
 4. If a matching plan exists, read its `Execution Status`, `Task Checklist`,
    `Decisions Log`, and `Outcomes / Drift` before auditing.

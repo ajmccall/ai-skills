@@ -53,7 +53,7 @@ Mostly automated. The user said `/my-land` which means DO IT.
      detection / final reporting so the plan record is still updated.
    - Closed → "Reopen it first."
    - Open → continue.
-5. Find the active plan in `.plans/` first, then `plans/` as a compatibility fallback.
+5. Find the active plan in `.plans/`.
    Read its `Execution Status`, `Task Checklist`, `Decisions Log`, and `Outcomes / Drift`
    so merge/deploy reporting updates the same execution record.
 6. Read the plan's `## Coordination` block if present so branch ownership and repo

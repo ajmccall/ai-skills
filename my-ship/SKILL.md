@@ -58,7 +58,7 @@ Use "the base branch" in all subsequent commands.
 2. `git status` (never `-uall`). Uncommitted changes are always included.
 3. `git diff <base>...HEAD --stat` and `git log <base>..HEAD --oneline` to understand
    what's being shipped.
-4. Find the active plan in `.plans/` first, then `plans/` as a compatibility fallback.
+4. Find the active plan in `.plans/`.
    Read its `Execution Status`, `Task Checklist`, `Decisions Log`, and `Outcomes / Drift`
    so the PR and shipping report reflect the real plan state.
 5. Read the plan's `## Coordination` block if present so the PR can carry the right

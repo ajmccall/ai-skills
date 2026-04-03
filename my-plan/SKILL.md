@@ -202,7 +202,7 @@ Present the plan to the user via AskUserQuestion:
 - C) Reconsider — go back to a specific step
 
 If the repo already documents `.plans/` as the implementation-plan location, treat that
-as canonical. Only use `plans/` as a compatibility fallback when `.plans/` is absent.
+as canonical.
 
 ---
 

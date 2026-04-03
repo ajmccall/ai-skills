@@ -51,8 +51,7 @@ Before reviewing code quality, check: did they build what was requested?
 
 1. Read `TODOS.md` (if exists), PR description (`gh pr view --json body -q .body`),
    commit messages (`git log origin/<base>..HEAD --oneline`).
-2. Check for a plan file: search `.plans/*.md` at the repo root first, then
-   `plans/*.md` as a compatibility fallback, for files matching the branch name or
+2. Check for a plan file: search `.plans/*.md` at the repo root for files matching the branch name or
    topic. If found, extract actionable tasks and cross-reference against the diff.
 3. If a matching plan is found, read its `## Coordination` block and verify the
    branch/worktree ownership matches the repo you are reviewing.

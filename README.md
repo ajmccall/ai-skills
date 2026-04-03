@@ -44,13 +44,13 @@ If the bug is user-facing in the browser, `my-qa` can be used before or after th
 
 For UX or visual work, there are two common entry points:
 
-`my-ideate` -> `my-design-review` -> `my-plan` -> `my-implement`
+`my-ideate` -> `my-eng-review` -> `my-design-review` -> `my-plan` -> `my-implement`
 
 or, for an already built UI:
 
 `my-design-review` -> `my-qa`
 
-- `my-design-review` can review a plan before implementation or audit live UI code after implementation
+- `my-design-review` can review the spec plus eng review before implementation, or audit live UI code after implementation
 - `my-qa` tests the product like a user and produces a report with evidence, without making changes
 
 ## Supporting Skills

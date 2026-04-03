@@ -18,7 +18,7 @@ allowed-tools:
 # Implement
 
 Create a feature branch and implement a plan from `.plans/` at the repo root.
-If `.plans/` does not exist, fall back to `plans/`.
+If `.plans/` does not exist STOP and ask user.
 
 ## Conventions
 
@@ -32,10 +32,10 @@ If `.plans/` does not exist, fall back to `plans/`.
 
 ## Step 1: Select Plan
 
-1. List files in `.plans/` at the repo root. If none exist, check `plans/`.
+1. List files in `.plans/` at the repo root.
 2. If one plan exists, use it.
 3. If multiple plans exist, present them via AskUserQuestion and ask which to implement.
-4. If no plans exist: "No plans found in `.plans/` or `plans/`. Run `my-plan` first." Stop.
+4. If no plans exist: "No plans found in `.plans/`. Run `my-plan` first." Stop.
 5. Read the selected plan fully.
 6. Read the plan's `Execution Status`, `Task Checklist`, `Decisions Log`, and
    `Outcomes / Drift` sections if present. If they are missing, create them before
@@ -116,7 +116,7 @@ After all tasks are complete:
 IMPLEMENTATION COMPLETE
 ========================
 Branch: feat/<topic>
-Plan:   .plans/YYYY-MM-DD-<topic>.md (or `plans/...` compatibility path)
+Plan:   .plans/YYYY-MM-DD-<topic>.md
 Tasks:  N/N completed
 Commits: N
 
@@ -139,5 +139,3 @@ If any tasks were skipped or partially done, flag them clearly.
   otherwise leave it at the most accurate intermediate status.
 - Before finishing, ensure the `## Coordination` block matches the actual repo
   and branch state for the work you completed.
-- If both `.plans/` and `plans/` exist, prefer `.plans/` unless the user explicitly
-  points to a file in `plans/`.
