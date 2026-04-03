@@ -290,6 +290,11 @@ Chosen approach with rationale.
 ## Open Questions
 Anything unresolved that needs answering before implementation.
 
+## ASCII Wireframes
+Strongly encouraged when the work materially changes screens, navigation, or UX flows. Include low-fidelity
+ASCII wireframes for the critical screens so a reviewer can see the intended hierarchy without
+inventing the interface from scratch.
+
 ## Success Criteria
 Measurable criteria.
 
@@ -325,6 +330,11 @@ Numbered list from Phase 3.
 ## Recommended Approach
 Chosen approach with rationale.
 
+## ASCII Wireframes
+Strongly encouraged when the work materially changes screens, navigation, or UX flows. Include low-fidelity
+ASCII wireframes for the critical screens so a reviewer can see the intended hierarchy without
+inventing the interface from scratch.
+
 ## Open Questions
 Anything unresolved.
 
@@ -339,6 +349,10 @@ Items considered and deferred, one line each.
 - Write as if handing off to someone who hasn't read the conversation.
 - Every file path must be verified.
 - If a decision was left unresolved, flag it as `[UNRESOLVED: <question>]`.
+- If the request is screen-heavy, dashboard-heavy, or flow-heavy, include an `## ASCII Wireframes`
+  section covering the key screens and the main user path.
+- ASCII wireframes should be structural, not decorative: layout, hierarchy, labels, primary
+  actions, and state distinctions matter; pixel-perfect styling does not.
 
 Present to the user via AskUserQuestion:
 - A) Approve — proceed
