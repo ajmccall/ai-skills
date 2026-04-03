@@ -1,10 +1,10 @@
 ---
 name: my-plan
 description: |
-  Implementation planning. Reads a spec from specs/ and eng review from reviews/,
-  produces a prescriptive implementation plan in .plans/ (fallback: plans/).
-  Output is concrete enough
-  to implement without further context: ordered tasks, exact files, acceptance criteria.
+  Implementation planning. Reads a spec from specs/ and review context from reviews/,
+  interrogates the inputs for ambiguity, and either produces a prescriptive plan in
+  .plans/ (fallback: plans/) or writes a blocked-planning artifact with explicit
+  questions and next steps.
   Use when: "plan this", "make the plan", "implementation plan", "break this down".
 allowed-tools:
   - Read
@@ -17,12 +17,13 @@ allowed-tools:
 
 # Implementation Planning
 
-Produce a prescriptive implementation plan from a spec and its eng review. The plan
-must be concrete enough that an engineer (or agent) can implement it step by step
-without reading any prior conversation.
+Produce a prescriptive implementation plan from a spec and its review context. If the
+inputs are too ambiguous to plan safely, stop and write a blocked-planning artifact
+that routes the open questions to the right upstream review step.
 
-**This skill does NOT review or ideate.** It synthesizes decisions already made into
-an ordered, file-level implementation plan.
+**This skill does NOT ideate or answer review-owned questions by guessing.** It can
+resolve obvious repo facts, but it must not silently invent product, design, or
+engineering decisions that belong upstream.
 
 ## Conventions
 
@@ -36,32 +37,111 @@ an ordered, file-level implementation plan.
 
 1. Look in `specs/` for the relevant spec file. If multiple exist, pick the most
    recent or the one matching the user's request.
-2. Look in `reviews/` for a corresponding eng review. If none exists, warn:
-   "No eng review found — proceeding from spec only. Run `my-eng-review` first
-   for better results."
-3. Read `CLAUDE.md`, `TODOS.md` if they exist.
-4. `git log --oneline -20` for recent context.
+2. Look in `reviews/` for corresponding review context. This may include engineering
+   review, design review, or both in the same artifact.
+3. If no review exists, warn:
+   "No review found — proceeding from spec only. Run `my-eng-review` and/or
+   `my-design-review` first for better planning results."
+4. Read `CLAUDE.md`, `TODOS.md` if they exist.
+5. `git log --oneline -20` for recent context.
 
 If no spec is found, AskUserQuestion: "I don't see a spec in `specs/`. Point me to
 one, or should we run `my-ideate` first?"
 
 ---
 
-## Step 2: Resolve Unresolved Questions
+## Step 2: Interrogate Inputs for Planning Readiness
 
-Scan the spec and review for any `[UNRESOLVED: ...]` markers.
+Before writing any implementation tasks, interrogate the spec and review context.
+
+Check whether planning can proceed without guesswork:
+- Is the requested behavior concrete enough to implement?
+- Are UX and interaction expectations specific enough?
+- Are API, data, validation, or state assumptions explicit enough?
+- Are acceptance criteria and tests knowable?
+- Are dependencies, sequencing constraints, or external ownership clear?
+- Would a planner need to invent decisions that belong to ideation, design review,
+  or engineering review?
+
+Classify ambiguity using these markers:
+- `[PLANNING BLOCKER: <issue>]`
+- `[OWNER: my-eng-review]`
+- `[OWNER: my-design-review]`
+- `[OWNER: my-ideate]`
+- `[DECISION NEEDED: <question>]`
+
+Routing rules:
+- product intent, scope meaning, or business behavior ambiguity -> `my-ideate`
+- UX flow, state, accessibility, or interaction ambiguity -> `my-design-review`
+- architecture, API, data, infra, or testability ambiguity -> `my-eng-review`
+
+If ambiguity is only a discoverable repo fact, investigate and resolve it now.
+If any real planning blocker remains, do not proceed to a full implementation plan.
+
+---
+
+## Step 3: Resolve Unresolved Questions
+
+Scan the spec and review for any `[UNRESOLVED: ...]` markers and any planning blockers
+you identified in Step 2.
 
 For each:
 1. Investigate the codebase (grep, read files) to see if the answer is obvious.
 2. If it is, state the resolution and move on.
 3. If not, AskUserQuestion with options and a recommendation.
 
-Do NOT proceed to planning with unresolved questions — every decision must be locked
-in before writing the plan.
+Do NOT proceed to a full implementation plan with unresolved planning blockers.
 
 ---
 
-## Step 3: Map the Codebase
+## Step 4: Branch on Readiness
+
+If planning is blocked, write a lightweight blocked-plan artifact in `.plans/` and stop.
+
+**Blocked artifact path:** `.plans/YYYY-MM-DD-<topic>.md`
+
+Use this structure:
+
+```markdown
+# <Title> — Planning Blocked — YYYY-MM-DD
+
+## Source
+- Spec: `specs/YYYY-MM-DD-<topic>.md`
+- Review: `reviews/YYYY-MM-DD-<topic>.md` (or "none")
+
+## Summary
+Short explanation of why planning cannot proceed yet.
+
+## Planning Blockers
+- [PLANNING BLOCKER: ...] [OWNER: my-eng-review] [DECISION NEEDED: ...]
+- [PLANNING BLOCKER: ...] [OWNER: my-design-review] [DECISION NEEDED: ...]
+- [PLANNING BLOCKER: ...] [OWNER: my-ideate] [DECISION NEEDED: ...]
+
+## Next Steps
+- Run `my-eng-review` for ...
+- Run `my-design-review` for ...
+- Refine the spec via `my-ideate` for ...
+
+## Execution Status
+Status: Planning Blocked
+
+## Decisions Log
+- YYYY-MM-DD: Planning blocked by unresolved upstream questions.
+
+## Outcomes / Drift
+- Planning could not proceed until blockers are resolved.
+```
+
+If planning is blocked:
+- do not write task-by-task implementation instructions
+- do not guess at missing decisions
+- tell the user exactly which upstream skill should answer each blocker
+
+If planning is not blocked, continue to Step 5.
+
+---
+
+## Step 5: Map the Codebase
 
 For each component mentioned in the spec:
 
@@ -74,7 +154,7 @@ For each component mentioned in the spec:
 
 ---
 
-## Step 4: Build Task Breakdown
+## Step 6: Build Task Breakdown
 
 Break the work into ordered implementation tasks. Each task should be:
 - **Independently testable** — you can verify it works before moving to the next
@@ -92,11 +172,11 @@ migration and the code that depends on it).
 
 ---
 
-## Step 5: Test Strategy
+## Step 7: Test Strategy
 
 For each task, specify what tests are needed:
 
-1. Pull test requirements from the eng review if available.
+1. Pull test requirements from review context if available.
 2. For each new codepath, specify:
    - Test file path (follow existing test conventions in the repo)
    - What to assert
@@ -105,7 +185,7 @@ For each task, specify what tests are needed:
 
 ---
 
-## Step 6: Write Plan Document
+## Step 8: Write Plan Document
 
 **File path:** `.plans/YYYY-MM-DD-<topic>.md` at the repo root.
 - Use today's date. Derive `<topic>` from the spec.
@@ -209,8 +289,8 @@ as canonical.
 ## Rules
 
 - NUMBER tasks (1, 2, 3) and LETTER options (A, B, C).
-- STOP after Step 2 (resolving questions) before proceeding — confirm all decisions.
+- STOP after Step 3 (resolving questions) before proceeding — confirm all decisions.
 - If a task is trivial (< 5 lines, obvious change), still list it — completeness
   matters more than brevity in a plan.
-- If the spec is too vague to produce concrete tasks, say so and recommend running
-  `my-eng-review` or revising the spec rather than guessing.
+- If the inputs are too vague to produce a concrete plan, write a blocked-plan
+  artifact rather than guessing.
